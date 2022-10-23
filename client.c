@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <strings.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -16,11 +15,9 @@ void communicate(int fd)
   char buff[SIZE];
   while(1)
   {
-    bzero(buff,SIZE);
     printf("Enter Message\n");
-    read(STD_IN,buff,sizeof(buff));
-    write(fd,buff,sizeof(buff));
-    bzero(buff,SIZE);
+    read(STD_IN,buff,SIZE);
+    write(fd,buff,SIZE);
     read(fd,buff,SIZE);
     printf("Server Sent %s",buff);
     if(strncmp("exit",buff,4) == 0)
