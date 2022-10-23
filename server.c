@@ -18,10 +18,10 @@ void communicate(int fd)
   {
     bzero(buff,SIZE);
     read(fd,buff,sizeof(buff));
-    printf("Client %s",buff);
+    printf("Client Sent : %s",buff);
     bzero(buff,SIZE);
-    int n = 0;
-    while((buff[n++] = getchar()) != '\n');
+    printf("Sent a response \n");
+    read(STD_IN,buff,SIZE);
     write(fd,buff,sizeof(buff));
     if(strncmp("exit",buff,4) == 0)
     {
@@ -66,7 +66,7 @@ int main()
   }
 
   //Listening
-  if(listen(server_socket_fd,1) == 0)
+  if(listen(server_socket_fd,5) == 0)
   {
     printf("Listening...\n");
   }
@@ -77,17 +77,19 @@ int main()
   }
 
   //Accepting
-  connection_socket_fd = connect(server_socket_fd,(struct sockaddr *)&client,sizeof(client));
-  if(connection_socket_fd == 0)
+  int size = sizeof(client);
+  connection_socket_fd = accept(server_socket_fd,(struct sockaddr *)&client,&size);
+  if(connection_socket_fd < 0)
   {
-    printf("Connected...\n");
+    perror("Connection failed...\n");
+    exit(1);
   }
   else
   {
-    perror("Connection failed...");
-    exit(1);
+    printf("Connected...\n");
   }
  
+  communicate(connection_socket_fd);
 
   //Closing the connection
   close(server_socket_fd);
